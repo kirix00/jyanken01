@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<script src="js/jquery-2.1.3.min.js"></script>
+<link rel="stylesheet" href="css/sample.css">
+<title>novel01</title>
+</head>
+<body> 
+<!-- <script type="text/javascript" src="../kadai/js/jquery-2.1.3.min.js"></script> -->
+<header>
+  <h1></h1>
+</header>
+
+<main>
+<canvas id="myCanvas" width="960" height="640"></canvas>
+
+<div id="messageBox" class="message-box">
+  <p id="messageText">いかがでしたか？ <a href="https://www.munakata-shiko2023.jp/" target="_blank">こちらを読んだ後に美術鑑賞はいかがですか。</a></p>
+  <button onclick="closeMessage()">はじめに戻る</button>
+</div>
+
+</main>
+
+<footer></footer>
+
+
+<script>
+// require('../css/app.css');
+
+var canvas = document.getElementById("myCanvas");
+var ctx = canvas.getContext("2d");
+
+var bgImage = new function () {
+  this.x = 0
+  this.y = 0;
+
+  this.width = canvas.width;
+  this.height = canvas.height;
+
+  this.loadImage = function () {
+    this.image = new Image();
+    this.image.src = "img/Gustav_Klim01.jpg";
+    this.image.onload = loader;
+
+  }
+
+  this.render = function () {
+    ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+  }
+}
+
+
+// var personImage = new function () {
+//   this.y = 0;
+
+//   this.loadImage = function () {
+//     this.image = new Image();
+//     this.image.src = "images/seinen.png";
+//     this.image.onload = loader;
+//   }
+
+//   this.render = function () {
+
+//     this.aspect = this.image.width / this.image.height;
+
+//     this.width = canvas.height * this.aspect;
+//     this.height = canvas.height;
+
+//     this.x = canvas.width / 2 - this.width / 2;
+
+//     ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+//   }
+// }
+
+
+var messageBox = new function () {
+  this.x = 0;
+
+  this.loadImage = function () {
+    this.image = new Image();
+    this.image.src = "img/mes22_003.png"; // 画像のパスを確認してください
+    this.image.onload = loader;
+  }
+
+  this.render = function () {
+    this.width = 960; // 幅を960pxに設定
+    this.height = 200; // 高さを300pxに設定
+
+    this.y = canvas.height - this.height; // 画像をキャンバスの下部に配置
+
+    ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+  }
+}
+
+
+var myText = new function () {
+  this.render = function (text) {
+    ctx.fillStyle = "#fff";
+    ctx.font = "20px serif";
+    ctx.textAlign = "left";
+
+    var messageBoxInnerWidth = messageBox.width - 40;
+    var messageBoxPaddingTop = 80;
+    var messageBoxPaddingLeft = 80;
+
+    // テキストの表示範囲を設定
+    var textMaxWidth = 500; // ここでテキストの最大幅を設定
+
+    // テキストの表示位置を調整する
+    // var offsetX = 20; // X座標のオフセット
+    // var offsetY = 20; // Y座標のオフセット 
+
+    var s = "";
+    var sentenceArray = text.split("");
+
+    var kaigyouHeight = 0;
+
+    for (var i = 0; i < sentenceArray.length; i++) {
+      s += sentenceArray[i];
+      var textWidth = ctx.measureText(s).width;
+
+      if(textWidth > messageBoxInnerWidth) {
+        ctx.fillText(s, messageBoxPaddingLeft, messageBox.y + kaigyouHeight + messageBoxPaddingTop);
+
+        kaigyouHeight += 30;
+        s = "";
+      }
+    }
+
+    ctx.fillText(s, messageBoxPaddingLeft, messageBox.y + kaigyouHeight + messageBoxPaddingTop);
+  }
+}
+
+var sentences = [
+  "〜　絵画の世界への扉　〜",
+
+  "第1章: 不思議なアンティークショップ",
+  "丸の内のオフィスビル群の中で、麻央は忙しく働く日々を過ごしていた。",
+  "40歳になっても彼女の情熱は衰えず、",
+  "おしゃれを楽しみ、趣味である絵画鑑賞に心を奪われていた。",
+  "英語も堪能で、国際的な仕事もこなす彼女は、同僚からの尊敬を集めていた。",
+
+  "ある日、いつものように仕事を終えた麻央は、",
+  "ふとした興味から古いアンティークショップに足を踏み入れることにした。",
+  "店内は静かで、様々な古い物が丁寧に並べられていた。",
+  "彼女の目はすぐに壁に掛けられた一枚の絵に引き寄せられた。",
+
+  "それは古びた風景画で、何とも言えない懐かしさと神秘的な魅力を放っていた。",
+  "麻央はその絵に見入ってしまい、次第に周りの音が遠くなっていくのを感じた。",
+
+  "気がつくと、彼女は絵の中に立っていた。",
+  "周りには描かれていた風景が広がり、驚きとともに心の中で興奮が湧き上がる。",
+  "これは夢なのか、それとも…。",
+
+  "「こんにちは」と、背後から声がした。",
+  "振り向くと、絵の中の一人の男性が微笑んでいた。",
+  "彼は麻央にこの世界のことを教え、一緒に冒険を続けることを提案した。",
+
+  "麻央は戸惑いながらも、この唯一無二の体験を楽しむことに決めた。",
+  "彼女は絵の世界を旅し、見たこともない風景と出会い、新たな感動を味わった。",
+
+  "やがて麻央は現実の世界に戻る方法を見つけ、アンティークショップに戻ってきた。",
+  "手には、絵の中での冒険を思い出させる小さなアンティークのアイテムが握られていた。",
+
+  "「これは夢だったのかしら…」と呟きながらも、麻央の心には新たな輝きが宿っていた。",
+  "そして、彼女はこれからも色々な絵画に出会い、",
+  "その世界を想像しながら生きていくことを誓った。",
+  "絵の中の冒険が彼女に与えてくれたのは、日常に隠された非日常への扉と、",
+  "それを開く勇気だった。",
+];
+
+var Loader = function (expectedCnt, callback) {
+  var cnt = 0;
+  return function() {
+    cnt++;
+    if(cnt == expectedCnt) {
+      callback();
+    }
+  }
+}
+
+var loader = Loader(1, function () {
+  update();
+});
+
+bgImage.loadImage();
+// personImage.loadImage();
+messageBox.loadImage();
+
+var sentenceIndex = 0;
+
+function update() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  if(sentenceIndex > sentences.length - 1) {
+    bgImage.render();
+    showMessage();
+  } else {
+    bgImage.render();
+    messageBox.render();
+    myText.render(text=sentences[sentenceIndex]);
+    sentenceIndex++;
+  }
+}
+
+function showMessage() {
+  var messageBox = document.getElementById('messageBox');
+  var bgRect = bgImage.image.getBoundingClientRect();
+
+  // bgImageの中央座標を計算
+  var centerX = bgRect.left + bgRect.width / 2;
+  var centerY = bgRect.top + bgRect.height / 2;
+
+  // メッセージボックスのサイズを取得
+  var messageWidth = messageBox.offsetWidth;
+  var messageHeight = messageBox.offsetHeight;
+
+  // メッセージボックスの位置を設定
+  messageBox.style.left = (centerX - messageWidth / 1240) + 'px';
+  messageBox.style.top = (centerY - messageHeight / 1240) + 'px';
+
+  messageBox.style.display = 'block';
+  // document.getElementById('messageBox').style.display = 'block';
+}
+
+
+function closeMessage() {
+  document.getElementById('messageBox').style.display = 'none';
+  location.reload();
+}
+
+// bgImageをsentences指定箇所で変化
+// var imageSources = {
+//   0: "img/Gustav_Klim03.jpg",
+//   5: "img/Gustav_Klim04.jpg",
+//   9: "img/Gustav_Klim01.jpg",
+// };
+
+// function updateBackgroundImage() {
+//   if (imageSources[sentenceIndex]) {
+//     bgImage.loadImage(imageSources[sentenceIndex]);
+//   }
+// }
+
+// function update() {
+//   ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+//   if (sentenceIndex > sentences.length - 1) {
+//     // すべての文が表示された後の処理
+//     bgImage.render();
+//     showFinalMessage();
+//   } else {
+//     bgImage.render();
+//     messageBox.render();
+//     myText.render(text = sentences[sentenceIndex]);
+//     sentenceIndex++;
+//     updateBackgroundImage();  // 背景画像を更新
+//   }
+// }
+
+canvas.addEventListener("click", function () {
+  update();
+});
+
+
+</script>
+</body>
+</html>
